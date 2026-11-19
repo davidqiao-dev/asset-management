@@ -3,6 +3,7 @@ package com.qiao.assetmanagement.equipment;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "equipment")
@@ -18,7 +19,13 @@ public class Equipment {
     @Enumerated(EnumType.STRING)
     private EquipmentStatus status = EquipmentStatus.AVAILABLE;
     private LocalDate purchaseDate;
-    private LocalDate createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Equipment() {
     }
@@ -70,11 +77,11 @@ public class Equipment {
         this.purchaseDate = purchaseDate;
     }
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }

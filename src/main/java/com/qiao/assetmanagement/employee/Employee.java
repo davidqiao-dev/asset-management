@@ -3,6 +3,7 @@ package com.qiao.assetmanagement.employee;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "employee")
@@ -16,9 +17,15 @@ public class Employee {
     @Column(name = "name")
     private String name;
 
-    private  String email;
-    private  String department;
-    private LocalDate createdAt;
+    private String email;
+    private String department;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Employee() {
     }
@@ -55,11 +62,11 @@ public class Employee {
         this.department = department;
     }
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }

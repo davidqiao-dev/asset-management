@@ -1,0 +1,34 @@
+package com.qiao.assetmanagement.equipment.dto;
+
+import com.qiao.assetmanagement.equipment.Equipment;
+import org.jspecify.annotations.NonNull;
+
+public class EquipmentMapper {
+
+    public static EquipmentResponse toResponse(Equipment equipment) {
+        return new EquipmentResponse(
+                equipment.getId(),
+                equipment.getAssetTag(),
+                equipment.getType(),
+                equipment.getBrand(),
+                equipment.getStatus(),
+                equipment.getPurchaseDate()
+        );
+    }
+
+    public static Equipment toEntity(EquipmentRequest equipmentRequest) {
+        Equipment equipment = new Equipment();
+        equipment.setAssetTag(equipmentRequest.assetTag());
+        equipment.setType(equipmentRequest.type());
+        equipment.setBrand(equipmentRequest.brand());
+        equipment.setPurchaseDate(equipmentRequest.purchaseDate());
+        return equipment;
+    }
+
+    public static void setEntity(EquipmentRequest equipmentRequest, Equipment equipment) {
+        equipment.setAssetTag(equipmentRequest.assetTag());
+        equipment.setType(equipmentRequest.type());
+        equipment.setBrand(equipmentRequest.brand());
+        equipment.setPurchaseDate(equipmentRequest.purchaseDate());
+    }
+}
