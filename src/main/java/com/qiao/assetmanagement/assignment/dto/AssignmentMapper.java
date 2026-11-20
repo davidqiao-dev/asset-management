@@ -7,7 +7,9 @@ public class AssignmentMapper {
         return new AssignmentResponse(
                 assignment.getId(),
                 assignment.getEmployee().getId(),
+                assignment.getEmployee().getName(),
                 assignment.getEquipment().getId(),
+                assignment.getEquipment().getAssetTag(),
                 assignment.getAssignedDate(),
                 assignment.getReturnedDate()
         );
