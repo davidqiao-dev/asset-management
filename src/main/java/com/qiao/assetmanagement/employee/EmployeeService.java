@@ -4,7 +4,7 @@ import com.qiao.assetmanagement.common.exception.BusinessRuleException;
 import com.qiao.assetmanagement.common.exception.ResourceNotFoundException;
 import com.qiao.assetmanagement.employee.dto.EmployeeMapper;
 import com.qiao.assetmanagement.employee.dto.EmployeeRequest;
-import com.qiao.assetmanagement.employee.dto.EmployeeResponse;
+import com.qiao.assetmanagement.employee.dto.EmployeeDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,8 @@ public class EmployeeService {
         this.employeeRepository = employeeRepository;
     }
 
-    public Page<EmployeeResponse> findAll(Pageable pageable) {
-        return employeeRepository.findAll(pageable).map(EmployeeMapper::toResponse);
+    public Page<EmployeeDto> findAll(Pageable pageable) {
+        return employeeRepository.findAll(pageable).map(EmployeeMapper::toDto);
     }
 
     private Employee findById(Long id) {
@@ -27,11 +27,11 @@ public class EmployeeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Employee", id));
     }
 
-    public EmployeeResponse findDtoById(Long id) {
-        return EmployeeMapper.toResponse(findById(id));
+    public EmployeeDto findDtoById(Long id) {
+        return EmployeeMapper.toDto(findById(id));
     }
 
-    public EmployeeResponse create(EmployeeRequest employeeRequest) {
+    public EmployeeDto create(EmployeeRequest employeeRequest) {
         if (employeeRepository.existsByEmail(employeeRequest.email())) {
             throw new BusinessRuleException("Employee with email "
                     + employeeRequest.email() + " already exists");
@@ -39,10 +39,10 @@ public class EmployeeService {
 
         Employee employee = EmployeeMapper.toEntity(employeeRequest);
 
-        return EmployeeMapper.toResponse(employeeRepository.save(employee));
+        return EmployeeMapper.toDto(employeeRepository.save(employee));
     }
 
-    public EmployeeResponse update(Long id, EmployeeRequest employeeRequest) {
+    public EmployeeDto update(Long id, EmployeeRequest employeeRequest) {
         Employee employee = findById(id);
         // allow the email to be unchanged, but block it from becoming someone else's
         if (!employee.getEmail().equals(employeeRequest.email())
@@ -52,7 +52,7 @@ public class EmployeeService {
         }
 
         EmployeeMapper.setEntity(employeeRequest, employee);
-        return EmployeeMapper.toResponse(employeeRepository.save(employee));
+        return EmployeeMapper.toDto(employeeRepository.save(employee));
     }
 
     public void delete(Long id) {

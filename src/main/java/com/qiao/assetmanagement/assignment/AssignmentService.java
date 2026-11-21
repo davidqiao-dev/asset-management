@@ -1,8 +1,8 @@
 package com.qiao.assetmanagement.assignment;
 
 import com.qiao.assetmanagement.assignment.dto.AssignmentMapper;
-import com.qiao.assetmanagement.assignment.dto.AssignmentRequest;
-import com.qiao.assetmanagement.assignment.dto.AssignmentResponse;
+import com.qiao.assetmanagement.assignment.dto.AssignmentDto;
+import com.qiao.assetmanagement.assignment.projection.EmployeeAssignmentCount;
 import com.qiao.assetmanagement.common.exception.BusinessRuleException;
 import com.qiao.assetmanagement.common.exception.ResourceNotFoundException;
 import com.qiao.assetmanagement.employee.Employee;
@@ -10,17 +10,20 @@ import com.qiao.assetmanagement.employee.EmployeeRepository;
 import com.qiao.assetmanagement.equipment.Equipment;
 import com.qiao.assetmanagement.equipment.EquipmentRepository;
 import com.qiao.assetmanagement.equipment.EquipmentStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class AssignmentService {
 
-    private EmployeeRepository employeeRepository;
-    private EquipmentRepository equipmentRepository;
-    private AssignmentRepository assignmentRepository;
+    private final EmployeeRepository employeeRepository;
+    private final EquipmentRepository equipmentRepository;
+    private final AssignmentRepository assignmentRepository;
 
     public AssignmentService(EmployeeRepository employeeRepository,
                              EquipmentRepository equipmentRepository,
@@ -32,7 +35,7 @@ public class AssignmentService {
     }
 
     @Transactional
-    public AssignmentResponse assign(Long employeeId, Long equipmentId) {
+    public AssignmentDto assign(Long employeeId, Long equipmentId) {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee", employeeId));
 
@@ -65,12 +68,12 @@ public class AssignmentService {
         equipment.setStatus(EquipmentStatus.ASSIGNED);
         equipmentRepository.save(equipment);
 
-        return AssignmentMapper.toResponse(assignmentRepository.save(assignment));
+        return AssignmentMapper.toDto(assignmentRepository.save(assignment));
 
     }
 
     @Transactional
-    public AssignmentResponse returnAssignment(Long id) {
+    public AssignmentDto returnAssignment(Long id) {
         Assignment assignment = assignmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Assignment", id));
         if (assignment.getReturnedDate() != null) {
@@ -84,6 +87,25 @@ public class AssignmentService {
         equipment.setStatus(EquipmentStatus.AVAILABLE);
         equipmentRepository.save(equipment);
 
-        return AssignmentMapper.toResponse(assignmentRepository.save(assignment));
+        return AssignmentMapper.toDto(assignmentRepository.save(assignment));
+    }
+
+
+    public Page<AssignmentDto> findActive(Pageable pageable) {
+        return assignmentRepository.findByReturnedDateIsNull(pageable)
+                .map(AssignmentMapper::toDto);
+    }
+
+    public List<AssignmentDto> currentAssignmentsForEmployee(Long employeeId) {
+
+        employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee", employeeId));
+
+        return assignmentRepository.findByEmployeeIdAndReturnedDateIsNull(employeeId)
+                .stream().map(AssignmentMapper::toDto).toList();
+    }
+
+    public List<EmployeeAssignmentCount> reportActiveByEmployee() {
+        return assignmentRepository.countActiveAssignmentCountByEmployee();
     }
 }

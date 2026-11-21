@@ -1,16 +1,15 @@
 package com.qiao.assetmanagement.employee;
 
-import com.qiao.assetmanagement.employee.dto.EmployeeMapper;
+import com.qiao.assetmanagement.assignment.AssignmentService;
+import com.qiao.assetmanagement.assignment.dto.AssignmentDto;
 import com.qiao.assetmanagement.employee.dto.EmployeeRequest;
-import com.qiao.assetmanagement.employee.dto.EmployeeResponse;
+import com.qiao.assetmanagement.employee.dto.EmployeeDto;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,14 +18,18 @@ import java.util.List;
 @RequestMapping("/api/employees")
 public class EmployeeController {
 
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
-    public EmployeeController(EmployeeService employeeService) {
+    private final AssignmentService assignmentService;
+
+    public EmployeeController(EmployeeService employeeService
+            , AssignmentService assignmentService) {
         this.employeeService = employeeService;
+        this.assignmentService = assignmentService;
     }
 
     @GetMapping
-    public Page<EmployeeResponse> getAllEmployees(
+    public Page<EmployeeDto> getAllEmployees(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "asc") String direction,
@@ -39,18 +42,18 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public EmployeeResponse getEmployee(@PathVariable Long id) {
+    public EmployeeDto getEmployee(@PathVariable Long id) {
         return employeeService.findDtoById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EmployeeResponse createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
+    public EmployeeDto createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
         return employeeService.create(employeeRequest);
     }
 
     @PutMapping("/{id}")
-    public EmployeeResponse updateEmployee(@Valid @RequestBody EmployeeRequest employeeRequest
+    public EmployeeDto updateEmployee(@Valid @RequestBody EmployeeRequest employeeRequest
             , @PathVariable Long id) {
 
         return employeeService.update(id, employeeRequest);
@@ -62,4 +65,10 @@ public class EmployeeController {
     public void deleteEmployee(@PathVariable Long id) {
         employeeService.delete(id);
     }
+
+    @GetMapping("/{id}/assignments")
+    public List<AssignmentDto> assignments(@PathVariable Long id) {
+        return assignmentService.currentAssignmentsForEmployee(id);
+    }
+
 }

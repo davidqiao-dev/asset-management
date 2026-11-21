@@ -1,11 +1,10 @@
 package com.qiao.assetmanagement.equipment.dto;
 
-import com.qiao.assetmanagement.equipment.Equipment;
 import com.qiao.assetmanagement.equipment.EquipmentStatus;
 
 import java.time.LocalDate;
 
-public record EquipmentResponse(
+public record EquipmentDto(
         Long id,
         String assetTag,
         String type,

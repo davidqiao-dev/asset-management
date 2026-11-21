@@ -1,13 +1,14 @@
 package com.qiao.assetmanagement.assignment.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
-public record AssignmentResponse(
-        Long id,
+public record AssignRequest(
+        @NotNull(message = "employeeId must not be null")
         Long employeeId,
-        String employeeName,
+        @NotNull(message = "equipmentId must not be null")
         Long equipmentId,
-        String assetTag,
         LocalDate assignedDate,
         LocalDate returnedDate
 ) {

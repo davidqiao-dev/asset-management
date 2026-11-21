@@ -3,8 +3,8 @@ package com.qiao.assetmanagement.assignment.dto;
 import com.qiao.assetmanagement.assignment.Assignment;
 
 public class AssignmentMapper {
-    public static AssignmentResponse toResponse(Assignment assignment) {
-        return new AssignmentResponse(
+    public static AssignmentDto toDto(Assignment assignment) {
+        return new AssignmentDto(
                 assignment.getId(),
                 assignment.getEmployee().getId(),
                 assignment.getEmployee().getName(),
@@ -15,10 +15,10 @@ public class AssignmentMapper {
         );
     }
 
-    public static Assignment toEntity(AssignmentRequest assignmentRequest) {
+    public static Assignment toEntity(AssignRequest assignRequest) {
         Assignment assignment = new Assignment();
-        assignment.setAssignedDate(assignmentRequest.assignedDate());
-        assignment.setReturnedDate(assignmentRequest.returnedDate());
+        assignment.setAssignedDate(assignRequest.assignedDate());
+        assignment.setReturnedDate(assignRequest.returnedDate());
         return assignment;
     }
 }

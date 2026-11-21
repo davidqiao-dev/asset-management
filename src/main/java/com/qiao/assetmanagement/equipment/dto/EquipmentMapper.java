@@ -1,12 +1,11 @@
 package com.qiao.assetmanagement.equipment.dto;
 
 import com.qiao.assetmanagement.equipment.Equipment;
-import org.jspecify.annotations.NonNull;
 
 public class EquipmentMapper {
 
-    public static EquipmentResponse toResponse(Equipment equipment) {
-        return new EquipmentResponse(
+    public static EquipmentDto toDto(Equipment equipment) {
+        return new EquipmentDto(
                 equipment.getId(),
                 equipment.getAssetTag(),
                 equipment.getType(),
