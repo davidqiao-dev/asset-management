@@ -8,6 +8,7 @@ import com.qiao.assetmanagement.equipment.dto.EquipmentResponse;
 import com.qiao.assetmanagement.equipment.projection.StatusCount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,6 +65,7 @@ public class EquipmentService {
         return EquipmentMapper.toDto(equipmentRepository.save(equipment));// status untouched
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(Long id) {
         equipmentRepository.delete(findById(id));
     }

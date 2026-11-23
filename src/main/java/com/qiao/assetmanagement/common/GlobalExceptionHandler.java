@@ -2,6 +2,8 @@ package com.qiao.assetmanagement.common;
 
 import com.qiao.assetmanagement.common.exception.BusinessRuleException;
 import com.qiao.assetmanagement.common.exception.ResourceNotFoundException;
+import com.qiao.assetmanagement.security.ErrorResponses;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -57,5 +59,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED) // 401
                 .body(Map.of("error", e.getMessage()));
 
+    }
+
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleDataIntegrityViolation(
+            DataIntegrityViolationException e
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT) // 409
+                .body(Map.of("error", "Cannot delete: this record is still referenced by other data"));
     }
 }

@@ -7,6 +7,7 @@ import com.qiao.assetmanagement.employee.dto.EmployeeRequest;
 import com.qiao.assetmanagement.employee.dto.EmployeeResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -55,6 +56,7 @@ public class EmployeeService {
         return EmployeeMapper.toDto(employeeRepository.save(employee));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(Long id) {
         employeeRepository.delete(findById(id));
     }
