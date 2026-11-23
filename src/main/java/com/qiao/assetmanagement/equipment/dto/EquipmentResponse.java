@@ -4,7 +4,7 @@ import com.qiao.assetmanagement.equipment.EquipmentStatus;
 
 import java.time.LocalDate;
 
-public record EquipmentDto(
+public record EquipmentResponse(
         Long id,
         String assetTag,
         String type,

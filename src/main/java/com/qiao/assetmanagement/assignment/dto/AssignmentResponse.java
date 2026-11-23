@@ -2,7 +2,7 @@ package com.qiao.assetmanagement.assignment.dto;
 
 import java.time.LocalDate;
 
-public record AssignmentDto(
+public record AssignmentResponse(
         Long id,
         Long employeeId,
         String employeeName,

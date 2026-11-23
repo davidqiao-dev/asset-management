@@ -8,7 +8,7 @@ import com.qiao.assetmanagement.equipment.EquipmentRepository;
 import com.qiao.assetmanagement.equipment.EquipmentService;
 import com.qiao.assetmanagement.equipment.EquipmentStatus;
 import com.qiao.assetmanagement.equipment.dto.EquipmentRequest;
-import com.qiao.assetmanagement.equipment.dto.EquipmentDto;
+import com.qiao.assetmanagement.equipment.dto.EquipmentResponse;
 import com.qiao.assetmanagement.equipment.projection.StatusCount;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ class AssetManagementApplicationTests {
 
     @Test
     void newEquipmentStartAvailable() {
-        EquipmentDto equipmentResponse = equipmentService.create(
+        EquipmentResponse equipmentResponse = equipmentService.create(
                 new EquipmentRequest(
                         "TAG-TEST", "LAPTOP", null, null)
         );

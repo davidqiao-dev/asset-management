@@ -4,8 +4,8 @@ import com.qiao.assetmanagement.equipment.Equipment;
 
 public class EquipmentMapper {
 
-    public static EquipmentDto toDto(Equipment equipment) {
-        return new EquipmentDto(
+    public static EquipmentResponse toDto(Equipment equipment) {
+        return new EquipmentResponse(
                 equipment.getId(),
                 equipment.getAssetTag(),
                 equipment.getType(),

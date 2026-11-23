@@ -47,3 +47,11 @@ create index idx_assignment_employee on assignment (employee_id);
 create index idx_assignment_equipment on assignment (equipment_id);
 create index idx_assignment_active on assignment (equipment_id, returned_date);
 
+create table app_user (
+    id bigint auto_increment primary key ,
+    username varchar(100) not null unique ,
+    password_hash varchar(100) not null,
+    role varchar(20) not null, -- ADMIN or OPERATOR
+    enabled boolean not null default true
+)
+

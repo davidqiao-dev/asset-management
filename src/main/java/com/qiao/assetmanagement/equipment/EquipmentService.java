@@ -4,7 +4,7 @@ import com.qiao.assetmanagement.common.exception.BusinessRuleException;
 import com.qiao.assetmanagement.common.exception.ResourceNotFoundException;
 import com.qiao.assetmanagement.equipment.dto.EquipmentMapper;
 import com.qiao.assetmanagement.equipment.dto.EquipmentRequest;
-import com.qiao.assetmanagement.equipment.dto.EquipmentDto;
+import com.qiao.assetmanagement.equipment.dto.EquipmentResponse;
 import com.qiao.assetmanagement.equipment.projection.StatusCount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +21,7 @@ public class EquipmentService {
         this.equipmentRepository = equipmentRepository;
     }
 
-    public Page<EquipmentDto> findAll(EquipmentStatus status, Pageable pageable) {
+    public Page<EquipmentResponse> findAll(EquipmentStatus status, Pageable pageable) {
         Page<Equipment> page = (status != null) ?
                 equipmentRepository.findByStatus(status, pageable) :
                 equipmentRepository.findAll(pageable);
@@ -34,12 +34,12 @@ public class EquipmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Equipment", id));
     }
 
-    public EquipmentDto findDtoById(Long id) {
+    public EquipmentResponse findDtoById(Long id) {
         Equipment equipment = findById(id);
         return EquipmentMapper.toDto(equipment);
     }
 
-    public EquipmentDto create(EquipmentRequest equipmentRequest) {
+    public EquipmentResponse create(EquipmentRequest equipmentRequest) {
         if (equipmentRepository.existsByAssetTag(equipmentRequest.assetTag())) {
             throw new BusinessRuleException("Equipment with asset tag " +
                     equipmentRequest.assetTag() + " already exists");
@@ -51,7 +51,7 @@ public class EquipmentService {
         return EquipmentMapper.toDto(equipment);
     }
 
-    public EquipmentDto update(Long id, EquipmentRequest equipmentRequest) {
+    public EquipmentResponse update(Long id, EquipmentRequest equipmentRequest) {
         Equipment equipment = findById(id);
         if (!equipment.getAssetTag().equals(equipmentRequest.assetTag())
                 && equipmentRepository.existsByAssetTag(equipmentRequest.assetTag())) {

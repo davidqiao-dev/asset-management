@@ -1,7 +1,7 @@
 package com.qiao.assetmanagement.assignment;
 
 import com.qiao.assetmanagement.assignment.dto.AssignRequest;
-import com.qiao.assetmanagement.assignment.dto.AssignmentDto;
+import com.qiao.assetmanagement.assignment.dto.AssignmentResponse;
 import com.qiao.assetmanagement.assignment.projection.EmployeeAssignmentCount;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -23,19 +23,19 @@ public class AssignmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AssignmentDto assign(@Valid @RequestBody AssignRequest assignRequest) {
+    public AssignmentResponse assign(@Valid @RequestBody AssignRequest assignRequest) {
         return assignmentService.assign(assignRequest.employeeId()
                 , assignRequest.equipmentId());
     }
 
     @PutMapping("/{id}/return")
-    public AssignmentDto returnAssignment(
+    public AssignmentResponse returnAssignment(
             @PathVariable Long id) {
         return assignmentService.returnAssignment(id);
     }
 
     @GetMapping("/active")
-    public Page<AssignmentDto> active(Pageable pageable) {
+    public Page<AssignmentResponse> active(Pageable pageable) {
         return assignmentService.findActive(pageable);
     }
 

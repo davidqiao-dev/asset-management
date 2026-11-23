@@ -4,7 +4,7 @@ import com.qiao.assetmanagement.common.exception.BusinessRuleException;
 import com.qiao.assetmanagement.common.exception.ResourceNotFoundException;
 import com.qiao.assetmanagement.employee.dto.EmployeeMapper;
 import com.qiao.assetmanagement.employee.dto.EmployeeRequest;
-import com.qiao.assetmanagement.employee.dto.EmployeeDto;
+import com.qiao.assetmanagement.employee.dto.EmployeeResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class EmployeeService {
         this.employeeRepository = employeeRepository;
     }
 
-    public Page<EmployeeDto> findAll(Pageable pageable) {
+    public Page<EmployeeResponse> findAll(Pageable pageable) {
         return employeeRepository.findAll(pageable).map(EmployeeMapper::toDto);
     }
 
@@ -27,11 +27,11 @@ public class EmployeeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Employee", id));
     }
 
-    public EmployeeDto findDtoById(Long id) {
+    public EmployeeResponse findDtoById(Long id) {
         return EmployeeMapper.toDto(findById(id));
     }
 
-    public EmployeeDto create(EmployeeRequest employeeRequest) {
+    public EmployeeResponse create(EmployeeRequest employeeRequest) {
         if (employeeRepository.existsByEmail(employeeRequest.email())) {
             throw new BusinessRuleException("Employee with email "
                     + employeeRequest.email() + " already exists");
@@ -42,7 +42,7 @@ public class EmployeeService {
         return EmployeeMapper.toDto(employeeRepository.save(employee));
     }
 
-    public EmployeeDto update(Long id, EmployeeRequest employeeRequest) {
+    public EmployeeResponse update(Long id, EmployeeRequest employeeRequest) {
         Employee employee = findById(id);
         // allow the email to be unchanged, but block it from becoming someone else's
         if (!employee.getEmail().equals(employeeRequest.email())

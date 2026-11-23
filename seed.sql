@@ -16,3 +16,7 @@ insert into assignment (employee_id, equipment_id, assigned_date, returned_date)
 (1, 1, '2024-01-10', null);
 
 update equipment set status = 'ASSIGNED' where id = 1;
+
+
+insert into app_user (username, password_hash, role ) values
+('admin', '$2a$10$wQlO7B3A5DrENs/oqkPoruTzUWpZrSMx5m9jRrldIi.eAJLv/Be5i', 'ADMIN');

@@ -1,7 +1,7 @@
 package com.qiao.assetmanagement.assignment;
 
 import com.qiao.assetmanagement.assignment.dto.AssignmentMapper;
-import com.qiao.assetmanagement.assignment.dto.AssignmentDto;
+import com.qiao.assetmanagement.assignment.dto.AssignmentResponse;
 import com.qiao.assetmanagement.assignment.projection.EmployeeAssignmentCount;
 import com.qiao.assetmanagement.common.exception.BusinessRuleException;
 import com.qiao.assetmanagement.common.exception.ResourceNotFoundException;
@@ -35,7 +35,7 @@ public class AssignmentService {
     }
 
     @Transactional
-    public AssignmentDto assign(Long employeeId, Long equipmentId) {
+    public AssignmentResponse assign(Long employeeId, Long equipmentId) {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee", employeeId));
 
@@ -73,7 +73,7 @@ public class AssignmentService {
     }
 
     @Transactional
-    public AssignmentDto returnAssignment(Long id) {
+    public AssignmentResponse returnAssignment(Long id) {
         Assignment assignment = assignmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Assignment", id));
         if (assignment.getReturnedDate() != null) {
@@ -91,12 +91,12 @@ public class AssignmentService {
     }
 
 
-    public Page<AssignmentDto> findActive(Pageable pageable) {
+    public Page<AssignmentResponse> findActive(Pageable pageable) {
         return assignmentRepository.findByReturnedDateIsNull(pageable)
                 .map(AssignmentMapper::toDto);
     }
 
-    public List<AssignmentDto> currentAssignmentsForEmployee(Long employeeId) {
+    public List<AssignmentResponse> currentAssignmentsForEmployee(Long employeeId) {
 
         employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee", employeeId));

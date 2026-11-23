@@ -1,9 +1,9 @@
 package com.qiao.assetmanagement.employee;
 
 import com.qiao.assetmanagement.assignment.AssignmentService;
-import com.qiao.assetmanagement.assignment.dto.AssignmentDto;
+import com.qiao.assetmanagement.assignment.dto.AssignmentResponse;
 import com.qiao.assetmanagement.employee.dto.EmployeeRequest;
-import com.qiao.assetmanagement.employee.dto.EmployeeDto;
+import com.qiao.assetmanagement.employee.dto.EmployeeResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +29,7 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public Page<EmployeeDto> getAllEmployees(
+    public Page<EmployeeResponse> getAllEmployees(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "asc") String direction,
@@ -42,18 +42,18 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public EmployeeDto getEmployee(@PathVariable Long id) {
+    public EmployeeResponse getEmployee(@PathVariable Long id) {
         return employeeService.findDtoById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EmployeeDto createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
+    public EmployeeResponse createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
         return employeeService.create(employeeRequest);
     }
 
     @PutMapping("/{id}")
-    public EmployeeDto updateEmployee(@Valid @RequestBody EmployeeRequest employeeRequest
+    public EmployeeResponse updateEmployee(@Valid @RequestBody EmployeeRequest employeeRequest
             , @PathVariable Long id) {
 
         return employeeService.update(id, employeeRequest);
@@ -67,7 +67,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}/assignments")
-    public List<AssignmentDto> assignments(@PathVariable Long id) {
+    public List<AssignmentResponse> assignments(@PathVariable Long id) {
         return assignmentService.currentAssignmentsForEmployee(id);
     }
 

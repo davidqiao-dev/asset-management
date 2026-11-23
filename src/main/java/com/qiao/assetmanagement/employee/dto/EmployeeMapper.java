@@ -7,8 +7,8 @@ public class EmployeeMapper {
     private EmployeeMapper() {
     }
 
-    public static EmployeeDto toDto(Employee employee) {
-        return new EmployeeDto(
+    public static EmployeeResponse toDto(Employee employee) {
+        return new EmployeeResponse(
                 employee.getId(),
                 employee.getName(),
                 employee.getEmail(),
