@@ -1,7 +1,6 @@
-# Asset Management System
+# Asset Management API
 
-A Spring Boot REST API for tracking company equipment — what's available,
-what's assigned to whom, and the full assignment history.
+Spring Boot backend for tracking company equipment and employee assignments.
 
 ## What it does
 
@@ -10,6 +9,18 @@ equipment is assigned to employees and later returned. The system enforces the
 rules: equipment can only be assigned if it's available, can't be double-assigned,
 and can't be assigned if retired. Reports show equipment by status and how many
 active items each employee has.
+
+## Stack
+
+Java · Spring Boot · Spring Security (JWT) · Spring Data JPA · MySQL · springdoc OpenAPI
+
+**Why JWT:** stateless auth — no server-side session store, so the API scales
+horizontally; the token carries identity and expiry, verified per request.
+
+## Authorization model
+
+Any authenticated user can read, create, update, assign, and return.
+Only ADMIN can delete. Deletes of referenced records return 409.
 
 ## Architecture
 
@@ -42,23 +53,31 @@ preserves the history of who had what.)
 
 ## Endpoints
 
-| Method | Path | Purpose |
-|---|---|---|
-| GET    | /api/employees | list, paginated |
-| GET    | /api/employees/{id} | one employee |
-| POST   | /api/employees | create |
-| PUT    | /api/employees/{id} | update |
-| DELETE | /api/employees/{id} | delete |
-| GET    | /api/employees/{id}/assignments | active items for an employee |
-| GET    | /api/equipment?status= | list, filtered + paginated |
-| POST   | /api/equipment | create (starts AVAILABLE) |
-| PUT    | /api/equipment/{id} | update (status not client-settable) |
-| DELETE | /api/equipment/{id} | delete |
-| POST   | /api/assignments | assign equipment to employee |
-| PUT    | /api/assignments/{id}/return | return it |
-| GET    | /api/assignments/active | current active assignments |
-| GET    | /api/equipment/report/by-status | equipment count by status |
-| GET    | /api/assignments/report/active-by-employee | active count per employee |
+| Method         | Path                                       | Purpose                        |
+|----------------|--------------------------------------------|--------------------------------|
+| POST           | /api/auth/login                            | obtain JWT                     |
+| GET/POST       | /api/equipment                             | list / create                  |
+| GET/PUT/DELETE | /api/equipment/{id}                        | read / update / delete (ADMIN) |
+| GET            | /api/equipment/report/by-status            | counts                         |
+| GET/POST       | /api/employees                             | list / create                  |
+| GET/PUT/DELETE | /api/employees/{id}                        | read / update / delete (ADMIN) |
+| GET            | /api/employees/{id}/assignments            | per-employee history           |
+| POST           | /api/assignments                           | assign equipment               |
+| PUT            | /api/assignments/{id}/return               | mark returned                  |
+| GET            | /api/assignments/active                    | paged active                   |
+| GET            | /api/assignments/report/active-by-employee | counts                         |
+
+## Engineering notes
+
+- Secrets are injected via environment variables (`DB_PASSWORD`, `JWT_SECRET`) —
+  no secret material is in the repo or in a committed profile file. The app fails
+  fast if `JWT_SECRET` is absent rather than falling back to a weak default.
+- Delete of a referenced equipment originally returned an *employee* error message —
+  corrected to an entity-neutral conflict message.
+- `/api/assignments/active` took a raw `Pageable` while every other list endpoint
+  used explicit `page`/`size`/`sort` params — unified.
+- `Assignment` is a separate entity (not a flag on equipment) so assignment history
+  is preserved, and a DB foreign key blocks deleting equipment that is in use.
 
 ## Running it
 
@@ -66,20 +85,28 @@ preserves the history of who had what.)
     mysql -u root -p < schema.sql
     mysql -u root -p < seed.sql
 
-    # 2. configure your DB password in src/main/resources/application.properties
+    # 2. provide secrets and DB config via environment variables
+
+    export DB_PASSWORD=your-db-password
+    export JWT_SECRET=your-secret-at-least-32-bytes-long
+    # (Windows cmd:  set DB_PASSWORD=...  /  set JWT_SECRET=...)
 
     # 3. run
     ./mvnw spring-boot:run
 
 See `requests.md` for ready-to-run curl examples.
 
+## Tests
+
+`./mvnw test` — 8 integration tests covering authN (401), authZ (ADMIN-only delete → 403),
+FK constraint (409), and duplicate-assignment (409).
+
 ## Notes / known limitations
 
-- No authentication (see "future work" below).
 - `spring.jpa.hibernate.ddl-auto=none` — the committed `schema.sql` is the source of truth.
+
 
 ## Future work
 
-- Spring Security with roles (admin / operator)
 - Frontend
 - Docker Compose for one-command startup
