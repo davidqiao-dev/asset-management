@@ -5,7 +5,9 @@ import com.qiao.assetmanagement.assignment.dto.AssignmentResponse;
 import com.qiao.assetmanagement.assignment.projection.EmployeeAssignmentCount;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +37,16 @@ public class AssignmentController {
     }
 
     @GetMapping("/active")
-    public Page<AssignmentResponse> active(Pageable pageable) {
+    public Page<AssignmentResponse> active(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(defaultValue = "id") String sort
+    ) {
+        Pageable pageable = PageRequest.of(page
+                , size
+                , Sort.by(Sort.Direction.fromString(direction), sort));
+
         return assignmentService.findActive(pageable);
     }
 
